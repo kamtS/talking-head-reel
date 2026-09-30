@@ -104,9 +104,11 @@ is the take map. Its suggested cut/end are meaningless here (they assume
 one take), ignore them. The raw whisper json it keeps next to the output
 is what `cut.py` reads. Whisper mangles product names; fix words with
 `--fix` and phrases later with `cut.py --phrase "Claude code=Claude Code"`.
-If the table comes back in lower case with no punctuation, rerun with
-`--prompt "Hey, I want to talk about launching on GitHub. We shipped in three weeks."` (one
-punctuated sentence in the speaker's register, names spelled right).
+If the table comes back in lower case with no punctuation (it happens
+now and then, not every run), rerun with `--prompt` and one or two
+punctuated sentences taken from what the speaker actually says, names
+spelled right. Keep the prompt on topic: an unrelated one can make
+whisper drop or merge words.
 
 Not every recording is multi-take. One continuous ramble with no restarts
 is edited the same way, but the job is choosing the story: pick the one
