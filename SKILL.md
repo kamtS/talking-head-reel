@@ -25,6 +25,18 @@ The Remotion project is `remotion/` next to this file (`cd remotion &&
 npm install` once). Every path below that says `src/`, `public/` or
 `out/` is inside it, and the scripts are run from inside it.
 
+Each reel gets its own folder, `src/reels/<name>/` (Reel.tsx,
+reel-segments.json, reel-words.json) with its recording in
+`public/talk/<name>/`, both gitignored. `src/Root.tsx` registers every
+`src/reels/<name>/Reel.tsx` as a composition called `<name>`, so a batch
+of recordings is a batch of folders in one project, and an old reel can be
+re-cut months later without touching the others. Where this file says
+`src/talk/reel-segments.json` or the composition `TalkReel`, read
+`src/reels/<name>/reel-segments.json` and `<name>`. `src/talk/reel-kit.tsx`
+holds the plumbing every reel repeats (E(), `At`, the zoom grammar, the
+speaker track with the frozen outro, `TextEndCard`), so a reel's Reel.tsx
+is only its beats; `src/reels/README.md` has a minimal one.
+
 ## What "good" looks like
 
 The speaker is centred and fills the width. Under the chin, a band of dark
@@ -92,6 +104,16 @@ is the take map. Its suggested cut/end are meaningless here (they assume
 one take), ignore them. The raw whisper json it keeps next to the output
 is what `cut.py` reads. Whisper mangles product names; fix words with
 `--fix` and phrases later with `cut.py --phrase "Claude code=Claude Code"`.
+If the table comes back in lower case with no punctuation, rerun with
+`--prompt "Hey, I want to talk about launching on GitHub. We shipped in three weeks."` (one
+punctuated sentence in the speaker's register, names spelled right).
+
+Not every recording is multi-take. One continuous ramble with no restarts
+is edited the same way, but the job is choosing the story: pick the one
+point the reel makes, keep the sentences that carry it, drop asides and
+repeats, and cut the long pauses inside the kept lines. Check the picture
+too: a take can go dark for a few seconds (a car into shade, a cloud)
+and that stretch is cut like a stumble.
 
 ### 3. Choose the takes
 
@@ -196,6 +218,16 @@ audio) and the right ~130 px from y 1000 down (like/comment/share). So:
   28 px with `whiteSpace: nowrap`, or it wraps at the hyphen.
 
 Details and the measured geometry are in `references/layout.md`.
+
+When the face sits low in the frame (a phone on a car dash: eyes around
+y 800, chin around y 1050, plain headliner above the head), flip the band:
+cards go at the TOP (`y` 270, down to about 580 so they clear the head at
+the strongest push-in), the reaction slot sits beside the head (x 760,
+y 620), the zoom origin moves to the face (about `53% 44%`), and the end
+card goes up to y 300. Measure one gridded frame before choosing. Road
+or engine noise also lifts the floor to about -30 dB, so `silencedetect`
+at -32 dB finds almost no pauses; read 0.1 s RMS (`astats`) instead, and
+trust the spectrogram in section 8 over whisper's word times there.
 
 ### 7. Check stills, then render
 
@@ -331,3 +363,5 @@ closing take, the repo name for the GitHub card once it exists.
 - `assets/reel-segments.example.json` its placeholder cut
 - `references/take-selection.md` how to choose takes, with a worked example on a fictional recording
 - `references/layout.md` the vertical geometry, the Instagram safe zones, the zoom grammar
+- `remotion/src/talk/reel-kit.tsx` the per-reel plumbing (`makeReel`: E(), `At`, zoom, speaker track, outro) and `TextEndCard`
+- `remotion/src/reels/` your reels, one folder each, auto-registered by `src/Root.tsx`, gitignored
