@@ -20,10 +20,12 @@ The audio is extracted to 16 kHz mono first so whisper does not choke on
 the phone's multi-track container.
 
 Whisper sometimes returns a whole take in lower case with no punctuation,
-which leaves the captions without sentence breaks. --prompt passes an
-initial prompt: one or two punctuated sentences in the speaker's register,
-with the product names spelled right, bring the capitals and full stops
-back (and help the names too).
+which leaves the captions without sentence breaks. It is intermittent, so
+only when a plain run comes back like that, rerun with --prompt: an initial
+prompt of one or two punctuated sentences taken from what the speaker
+actually says, with the product names spelled right. Keep it on topic; an
+unrelated prompt can make whisper merge or drop words in a take it would
+have transcribed fine without one.
 """
 import argparse
 import json
@@ -134,7 +136,7 @@ def main():
     ap.add_argument("--fix", action="append", default=[], help="OLD=NEW word replacement, repeatable")
     ap.add_argument("--model", default="turbo")
     ap.add_argument("--raw", help="reuse an existing whisper json instead of transcribing")
-    ap.add_argument("--prompt", help="initial prompt for whisper: a punctuated sentence or two with the names spelled right")
+    ap.add_argument("--prompt", help="initial prompt for whisper, only when a plain run comes back unpunctuated: a punctuated sentence or two from the recording, names spelled right")
     a = ap.parse_args()
 
     data = json.load(open(a.raw)) if a.raw else transcribe(a.src, a.model, a.prompt)
