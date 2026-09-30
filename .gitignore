@@ -3,3 +3,6 @@ remotion/out/
 remotion/public/talk/
 remotion/public/memes/
 .DS_Store
+remotion/src/reels/*
+!remotion/src/reels/README.md
+__pycache__/
